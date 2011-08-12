@@ -16,7 +16,7 @@ a = set_array( zeros( size(x) ) ) ;
 a1 = set_array( zeros( size(x) ) ) ;
 v = set_array( zeros( size(x) ) ) ;
 F = set_array( zeros( size(x) ) ) ;
-mc = set_array( zeros( size(x) ) ) ;
+mc = set_array( zeros( 1, dim ) ) ;
 
 %m(30) = 5 ;
 
@@ -27,7 +27,13 @@ mt = sum( m ) ;
 
 
 for i=1:steps
+    
     xc = sum( x , 1 ) ;
+    
+    for n=1:dim
+        mc(n) = sum( m.*x(:,n) ) / mt ;
+    end
+    
     for j=1:size(x,1)
         xcs = xc - x(j,:) ;
         mts = mt - m(j) ;
@@ -49,24 +55,22 @@ for i=1:steps
     for n=1:dim
         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  / 2 * dt ;
     end
-    %toc 
+        
     
-    for n=1:dim
-        mc(:,n) = m.*x(:,n) / mt ;
-    end
+    %toc
+    
     
     hold off ;
     plot3( x(:,1) , x(:,2) , x(:,3) , '.') ;
     grid on ;
     hold on ;
-    plot3( mc(1) , mc(2)/mt , mc(3)/mt , '+' , 'Color' , 'red' ) ;
+    plot3( mc(1) , mc(2) , mc(3) , '+' , 'Color' , 'red' ) ;
     xlim([-lm lm]) ;
     ylim([-lm lm]) ;
     zlim([-lm lm]) ;
     drawnow;
     pause(0.0);
-    
-    
+      
 end
 
 
