@@ -2,13 +2,13 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 1000 ;
+vs = 100 ;
 vr = 1:vs ;
 
 G = 0.01 ;
 dim = 3 ;
 dt = 0.001 ;
-steps = 10000 ;
+steps = 40000 ;
 
 x = set_array( rand( vs , dim )*2 - 1 );
 m = set_array( ones( size(x,1) , 1 ) );
@@ -16,10 +16,11 @@ a = set_array( zeros( size(x) ) ) ;
 a1 = set_array( zeros( size(x) ) ) ;
 v = set_array( zeros( size(x) ) ) ;
 F = set_array( zeros( size(x) ) ) ;
+mc = set_array( zeros( size(x) ) ) ;
 
-m(30) = 50000000 ;
+%m(30) = 5 ;
 
-lm = 30000 ;
+lm = 3 ;
 
 xc = sum( x , 1 ) ;
 mt = sum( m ) ;
@@ -49,11 +50,16 @@ for i=1:steps
         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  / 2 * dt ;
     end
     %toc 
+    
+    for n=1:dim
+        mc(:,n) = m.*x(:,n) / mt ;
+    end
+    
     hold off ;
     plot3( x(:,1) , x(:,2) , x(:,3) , '.') ;
     grid on ;
     hold on ;
-    plot3( xc(1)/mt , xc(2)/mt , xc(3)/mt , '+' , 'Color' , 'red' ) ;
+    plot3( mc(1) , mc(2)/mt , mc(3)/mt , '+' , 'Color' , 'red' ) ;
     xlim([-lm lm]) ;
     ylim([-lm lm]) ;
     zlim([-lm lm]) ;
