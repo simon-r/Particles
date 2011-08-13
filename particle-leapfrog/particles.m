@@ -13,39 +13,56 @@ steps = 40000 ;
 x = set_array( rand( vs , dim )*2 - 1 );
 m = set_array( ones( size(x,1) , 1 ) );
 a = set_array( zeros( size(x) ) ) ;
+xcp = set_array( zeros( size(x) ) ) ;
 a1 = set_array( zeros( size(x) ) ) ;
 v = set_array( zeros( size(x) ) ) ;
+
 F = set_array( zeros( size(x) ) ) ;
+Fs = set_array( ones( size(x,1) , 1 ) ) ; 
+
+rv = set_array( zeros( size(x) ) ) ;
+dist = set_array( ones( size(x,1) , 1 ) ) ;
+ru = set_array( ones( size(x,1) , 1 ) ) ;
+
 mc = set_array( zeros( 1, dim ) ) ;
+mcp = set_array( ones( size(x) ) ) ; 
+
 
 %m(30) = 5 ;
 
 lm = 3 ;
 
-xc = sum( x , 1 ) ;
+% xc = sum( x , 1 ) ;
 mt = sum( m ) ;
 
+mp = mt - m ;
 
 for i=1:steps
     
-    xc = sum( x , 1 ) ;
+    tic ;
+%    xc = sum( x , 1 ) ;
+%     for n=1:dim
+%         xcp(:,n) = xc(n) - x(:,n) ;
+%     end
     
     for n=1:dim
-        mc(n) = sum( m.*x(:,n) ) / mt ;
+        sm = sum( m.*x(:,n) ) ;
+        mcp(:,n) = ( sm - m.*x(:,n)) ./ mp ;
+        mc(n) = sm / mt ;
+        rv(:,n) = x(:,n) - mcp(:,n) ;
     end
     
-    for j=1:size(x,1)
-        xcs = xc - x(j,:) ;
-        mts = mt - m(j) ;
-        
-        rv =  x(j,:) - (xcs/(vs-1)) ;
-        dist = sqrt( sum( ( rv ).^2 ) ) ;
-        
-        F(j,:) = -(G * m(j) * mts ) / ... 
-            ( dist.^2 ) * ... 
-            ( rv ) ;
+    dist = sqrt ( sum( (x - mcp).^2 , 2 ) ) ;
+    
+    for n=1:dim
+        ru(:,n) = rv(:,n) ./ dist ;
     end
     
+    Fs = (G .* m .* mp ) ./ ( dist.^2 ) ;
+    for n=1:dim
+        F(:,n) = Fs .* ru(:,n) ;
+    end
+        
     for n=1:dim
         a1(:,n) = F(:,n) ./ m ;
     end
@@ -57,7 +74,7 @@ for i=1:steps
     end
         
     
-    %toc
+    toc
     
     
     hold off ;
