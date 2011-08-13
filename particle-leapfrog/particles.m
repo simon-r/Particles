@@ -2,10 +2,10 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 100 ;
+vs = 100000 ;
 vr = 1:vs ;
 
-G = 0.01 ;
+G = 0.000001 ;
 dim = 3 ;
 dt = 0.001 ;
 steps = 40000 ;
@@ -52,26 +52,29 @@ for i=1:steps
         rv(:,n) = x(:,n) - mcp(:,n) ;
     end
     
-    dist = sqrt ( sum( (x - mcp).^2 , 2 ) ) ;
+    dist(:) = sqrt ( sum( (x - mcp).^2 , 2 ) ) ;
     
     for n=1:dim
         ru(:,n) = rv(:,n) ./ dist ;
     end
     
-    Fs = (G .* m .* mp ) ./ ( dist.^2 ) ;
+    Fs(:) = (G .* m .* mp ) ./ ( dist.^2 ) ;
     for n=1:dim
-        F(:,n) = Fs .* ru(:,n) ;
+        F(:,n) = -Fs .* ru(:,n) ;
     end
         
     for n=1:dim
         a1(:,n) = F(:,n) ./ m ;
     end
     
-    x = lf_step( x , v , a , dt , dim ) ;
-    
     for n=1:dim
-        v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  / 2 * dt ;
+        x(:,n) = x(:,n) + a1(:,n)*dt ;
     end
+    %x = lf_step( x , v , a , dt , dim ) ;
+    
+%     for n=1:dim
+%         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;
+%     end
         
     
     toc
