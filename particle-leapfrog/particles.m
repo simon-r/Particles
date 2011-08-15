@@ -2,30 +2,36 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 100000 ;
-vr = 1:vs ;
+vs = 100 ;
 
-G = 0.000001 ;
+tmsize = (vs-1)*vs / 2 ;
+
+G = 0.0001 ;
 dim = 3 ;
 dt = 0.001 ;
 steps = 40000 ;
 
 x = set_array( rand( vs , dim )*2 - 1 );
-m = set_array( ones( size(x,1) , 1 ) );
-a = set_array( zeros( size(x) ) ) ;
-xcp = set_array( zeros( size(x) ) ) ;
-a1 = set_array( zeros( size(x) ) ) ;
-v = set_array( zeros( size(x) ) ) ;
 
-F = set_array( zeros( size(x) ) ) ;
-Fs = set_array( ones( size(x,1) , 1 ) ) ; 
+m = set_array( ones( size(x,1) , 1 ) );
+m1m2 = set_array( ones( tmsize , 1 ) ) ;
+
+a = set_array( zeros( size(x) ) ) ;
+%xcp = set_array( zeros( size(x) ) ) ;
+a1 = set_array( zeros( size(x) ) ) ;
+%v = set_array( zeros( size(x) ) ) ;
+
+F = set_array( zeros( tmsize , dim ) ) ;
+Fs = set_array( ones( tmsize , 1 ) ) ; 
 
 rv = set_array( zeros( size(x) ) ) ;
-dist = set_array( ones( size(x,1) , 1 ) ) ;
+dist = set_array( ones( tmsize , 1 ) ) ;
 ru = set_array( ones( size(x,1) , 1 ) ) ;
 
 mc = set_array( zeros( 1, dim ) ) ;
 mcp = set_array( ones( size(x) ) ) ; 
+
+
 
 
 %m(30) = 5 ;
@@ -40,10 +46,6 @@ mp = mt - m ;
 for i=1:steps
     
     tic ;
-%    xc = sum( x , 1 ) ;
-%     for n=1:dim
-%         xcp(:,n) = xc(n) - x(:,n) ;
-%     end
     
     for n=1:dim
         sm = sum( m.*x(:,n) ) ;
@@ -52,13 +54,17 @@ for i=1:steps
         rv(:,n) = x(:,n) - mcp(:,n) ;
     end
     
-    dist(:) = sqrt ( sum( (x - mcp).^2 , 2 ) ) ;
+%     for n=1:dim
+%         ru(:,n) = rv(:,n) ./ dist ;
+%     end
     
-    for n=1:dim
-        ru(:,n) = rv(:,n) ./ dist ;
-    end
+    m1m2(:) = pdist( m , @dist_mult ) ;
+    dist(:) = pdist( x ) ;
     
-    Fs(:) = (G .* m .* mp ) ./ ( dist.^2 ) ;
+    Fs(:) = (G .* m1m2 ) ./ ( dist.^2 ) ;
+    
+    
+    
     for n=1:dim
         F(:,n) = -Fs .* ru(:,n) ;
     end
