@@ -47,12 +47,12 @@ for i=1:steps
     
     tic ;
     
-    for n=1:dim
-        sm = sum( m.*x(:,n) ) ;
-        mcp(:,n) = ( sm - m.*x(:,n)) ./ mp ;
-        mc(n) = sm / mt ;
-        rv(:,n) = x(:,n) - mcp(:,n) ;
-    end
+%     for n=1:dim
+%         sm = sum( m.*x(:,n) ) ;
+%         mcp(:,n) = ( sm - m.*x(:,n)) ./ mp ;
+%         mc(n) = sm / mt ;
+%         rv(:,n) = x(:,n) - mcp(:,n) ;
+%     end
     
 %     for n=1:dim
 %         ru(:,n) = rv(:,n) ./ dist ;
