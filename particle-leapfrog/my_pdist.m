@@ -6,10 +6,14 @@ sX = size(X) ;
 
 tmsize = ( sX(1) - 1 ) * sX(1) / 2 ;
 
-r = zeros( sX(2) , tmsize ) ;
+r = zeros( tmsize , sX(2) ) ;
 
+ir = 1 ;
 for i=1:(sX(1)-1)
-    
+    pr = dist_f( X(i,:) , X( (i+1):sX(1) , : ) ) ;
+    spr = size(pr,1) ;
+    r( ir:(ir+spr-1) , : ) = pr ;
+    ir = ir + spr ;
 end
 
 end
