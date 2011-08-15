@@ -2,11 +2,11 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 100 ;
+vs = 4 ;
 
 tmsize = (vs-1)*vs / 2 ;
 
-G = 0.0001 ;
+G = 1 ;
 dim = 3 ;
 dt = 0.001 ;
 steps = 40000 ;
@@ -21,17 +21,17 @@ a = set_array( zeros( size(x) ) ) ;
 a1 = set_array( zeros( size(x) ) ) ;
 %v = set_array( zeros( size(x) ) ) ;
 
-F = set_array( zeros( tmsize , dim ) ) ;
+F = set_array( zeros( vs , dim ) ) ;
 Fs = set_array( ones( tmsize , 1 ) ) ; 
 
-rv = set_array( zeros( size(x) ) ) ;
+%rv = set_array( zeros( size(x) ) ) ;
 dist = set_array( ones( tmsize , 1 ) ) ;
-ru = set_array( ones( size(x,1) , 1 ) ) ;
+ru = set_array( zeros( tmsize , dim ) ) ;
 
 mc = set_array( zeros( 1, dim ) ) ;
-mcp = set_array( ones( size(x) ) ) ; 
+%mcp = set_array( ones( size(x) ) ) ; 
 
-
+indx = set_array( zeros( vs-1 , 1 ) ) ;
 
 
 %m(30) = 5 ;
@@ -41,32 +41,37 @@ lm = 3 ;
 % xc = sum( x , 1 ) ;
 mt = sum( m ) ;
 
-mp = mt - m ;
-
+%mp = mt - m ;
+    
+for j=2:(vs-1+1)
+    indx(j) = indx(j-1) + vs-j ;
+end
+    
+    
+    
 for i=1:steps
     
     tic ;
-    
-%     for n=1:dim
-%         sm = sum( m.*x(:,n) ) ;
-%         mcp(:,n) = ( sm - m.*x(:,n)) ./ mp ;
-%         mc(n) = sm / mt ;
-%         rv(:,n) = x(:,n) - mcp(:,n) ;
-%     end
-    
-%     for n=1:dim
-%         ru(:,n) = rv(:,n) ./ dist ;
-%     end
-    
+        
     m1m2(:) = pdist( m , @dist_mult ) ;
     dist(:) = pdist( x ) ;
     
     Fs(:) = (G .* m1m2 ) ./ ( dist.^2 ) ;
     
+    ru(:) = my_pdist( x , @dist_uvect ) ;
     
     
-    for n=1:dim
-        F(:,n) = -Fs .* ru(:,n) ;
+    
+    for j=1:vs
+        i1 = (indx(1:j-1) + j-1)' ;
+        i2 = (j+indx(j)):(indx(j)+vs-1) ;
+        
+        for n=1:dim
+            tFs = ([ -Fs(i1) ; 0 ; Fs(i2) ] .* ...
+                [ -ru(i1,n) ; 0 ; ru(i2,n) ]) ;
+            
+            F(j,n) = sum( tFs ) ;
+        end
     end
         
     for n=1:dim
@@ -76,6 +81,9 @@ for i=1:steps
     for n=1:dim
         x(:,n) = x(:,n) + a1(:,n)*dt ;
     end
+    
+
+    
     %x = lf_step( x , v , a , dt , dim ) ;
     
 %     for n=1:dim
