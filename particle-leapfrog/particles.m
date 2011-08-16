@@ -2,11 +2,11 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 4 ;
+vs = 200 ;
 
 tmsize = (vs-1)*vs / 2 ;
 
-G = 1 ;
+G = 0.1 ;
 dim = 3 ;
 dt = 0.001 ;
 steps = 40000 ;
@@ -19,7 +19,7 @@ m1m2 = set_array( ones( tmsize , 1 ) ) ;
 a = set_array( zeros( size(x) ) ) ;
 %xcp = set_array( zeros( size(x) ) ) ;
 a1 = set_array( zeros( size(x) ) ) ;
-%v = set_array( zeros( size(x) ) ) ;
+v = set_array( zeros( size(x) ) ) ;
 
 F = set_array( zeros( vs , dim ) ) ;
 Fs = set_array( ones( tmsize , 1 ) ) ; 
@@ -67,7 +67,7 @@ for i=1:steps
         i2 = (j+indx(j)):(indx(j)+vs-1) ;
         
         for n=1:dim
-            tFs = ([ -Fs(i1) ; 0 ; Fs(i2) ] .* ...
+            tFs = ([ Fs(i1) ; 0 ; Fs(i2) ] .* ...
                 [ -ru(i1,n) ; 0 ; ru(i2,n) ]) ;
             
             F(j,n) = sum( tFs ) ;
@@ -79,18 +79,13 @@ for i=1:steps
     end
     
     for n=1:dim
-        x(:,n) = x(:,n) + a1(:,n)*dt ;
+        x(:,n) = x(:,n) + v(:,n)*dt + 1/2*a1(:,n)*dt^2 ;
+        %v(:,n) = v(:,n) + a1(:,n)*dt ;
+        v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;
     end
     
-
-    
-    %x = lf_step( x , v , a , dt , dim ) ;
-    
-%     for n=1:dim
-%         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;
-%     end
+    a(:) = a1(:) ;
         
-    
     toc
     
     
