@@ -2,14 +2,14 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 200 ;
+vs = 400 ;
 
 tmsize = (vs-1)*vs / 2 ;
 
 G = 0.1 ;
 dim = 3 ;
 dt = 0.001 ;
-steps = 40000 ;
+steps = 200 ;
 
 x = set_array( rand( vs , dim )*2 - 1 );
 
@@ -24,6 +24,9 @@ v = set_array( zeros( size(x) ) ) ;
 F = set_array( zeros( vs , dim ) ) ;
 Fs = set_array( ones( tmsize , 1 ) ) ; 
 
+tFs = set_array( zeros( vs , dim ) ) ;
+Fsi = set_array( zeros( vs , 1 ) ) ;
+
 %rv = set_array( zeros( size(x) ) ) ;
 dist = set_array( ones( tmsize , 1 ) ) ;
 ru = set_array( zeros( tmsize , dim ) ) ;
@@ -33,10 +36,12 @@ mc = set_array( zeros( 1, dim ) ) ;
 
 indx = set_array( zeros( vs-1 , 1 ) ) ;
 
+clock1 = 0 ;
+clock2 = 0 ;
 
 %m(30) = 5 ;
 
-lm = 3 ;
+lm = 10 ;
 
 % xc = sum( x , 1 ) ;
 mt = sum( m ) ;
@@ -51,27 +56,28 @@ end
     
 for i=1:steps
     
-    tic ;
-        
-    m1m2(:) = pdist( m , @dist_mult ) ;
+    tic ;   
+    m1m2(:) = my_pdist( m , @dist_mult ) ;
     dist(:) = pdist( x ) ;
     
     Fs(:) = (G .* m1m2 ) ./ ( dist.^2 ) ;
     
     ru(:) = my_pdist( x , @dist_uvect ) ;
+    clock1 = clock1 + toc  ;
     
     
     
+    tic ;
     for j=1:vs
         i1 = (indx(1:j-1) + j-1)' ;
         i2 = (j+indx(j)):(indx(j)+vs-1) ;
         
+        Fsi(:) = [ Fs(i1) ; 0 ; Fs(i2)] ;
+        
         for n=1:dim
-            tFs = ([ Fs(i1) ; 0 ; Fs(i2) ] .* ...
-                [ -ru(i1,n) ; 0 ; ru(i2,n) ]) ;
-            
-            F(j,n) = sum( tFs ) ;
+            tFs(:,n) = ( Fsi .* [ -ru(i1,n) ; 0 ; ru(i2,n) ]) ; 
         end
+        F(j,:) = sum( tFs , 1 )' ;
     end
         
     for n=1:dim
@@ -86,10 +92,10 @@ for i=1:steps
     
     a(:) = a1(:) ;
         
-    toc
+    clock2 = clock2 + toc  ;
     
     
-    hold off ;
+    cla ;
     plot3( x(:,1) , x(:,2) , x(:,3) , '.') ;
     grid on ;
     hold on ;
@@ -102,10 +108,11 @@ for i=1:steps
       
 end
 
+disp('========================') ;
+disp('step 1:') ;
+disp( clock1 / steps ) ;
 
-    function ar = set_array( ar ) 
-        %ar = gpuArray( ar ) ;
-    end
-
+disp('step 2:') ;
+disp( clock2 / steps ) ;
 end
 
