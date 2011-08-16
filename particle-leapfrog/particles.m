@@ -2,16 +2,16 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 50 ;
+vs = 1000 ;
 
 tmsize = (vs-1)*vs / 2 ;
 
-G = 0.5 ;
+G = 0.005 ;
 dim = 3 ;
 dt = 0.004 ;
-steps = 200000 ;
+steps = 200 ;
 
-x = set_array( rand( vs , dim )*2 - 1 );
+x = set_array( rand_sphe( vs ) );
 
 m = set_array( rand( size(x,1) , 1 )*0.5 + 1 );
 m1m2 = set_array( ones( tmsize , 1 ) ) ;
@@ -41,7 +41,7 @@ clock2 = 0 ;
 
 %m(30) = 5 ;
 
-lm = 10 ;
+lm = 5 ;
 
 mt = sum( m ) ;
 
@@ -56,7 +56,7 @@ for i=1:steps
     
     tic ;   
 
-    Fs(:) = spring( G , x , m ) ;
+    Fs(:) = gravity( G , x , m ) ;
     
     ru(:) = my_pdist( x , @dist_uvect ) ;
     clock1 = clock1 + toc  ;
@@ -76,7 +76,7 @@ for i=1:steps
             
     parfor n=1:dim
         a1(:,n) = F(:,n) ./ m ;
-        x(:,n) = x(:,n) + v(:,n)*dt + 1/2*a1(:,n)*dt^2 ;
+        x(:,n) = x(:,n) + v(:,n)*dt + 1/2*a(:,n)*dt^2 ;
         %v(:,n) = v(:,n) + a1(:,n)*dt ;
         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;
     end
