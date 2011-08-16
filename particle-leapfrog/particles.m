@@ -2,14 +2,14 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 400 ;
+vs = 1000 ;
 
 tmsize = (vs-1)*vs / 2 ;
 
 G = 0.1 ;
 dim = 3 ;
 dt = 0.001 ;
-steps = 200 ;
+steps = 2000 ;
 
 x = set_array( rand( vs , dim )*2 - 1 );
 
@@ -34,7 +34,7 @@ ru = set_array( zeros( tmsize , dim ) ) ;
 mc = set_array( zeros( 1, dim ) ) ;
 %mcp = set_array( ones( size(x) ) ) ; 
 
-indx = set_array( zeros( vs-1 , 1 ) ) ;
+indx = zeros( vs-1 , 1 ) ;
 
 clock1 = 0 ;
 clock2 = 0 ;
@@ -53,12 +53,12 @@ for j=2:(vs-1+1)
 end
     
     
-    
+disp(' === Start ========================') ;   
 for i=1:steps
     
     tic ;   
     m1m2(:) = my_pdist( m , @dist_mult ) ;
-    dist(:) = my_pdist( x , @dist_eucl ) ;
+    dist(:) = pdist( x ) ;
     
     Fs(:) = (G .* m1m2 ) ./ ( dist.^2 ) ;
     
@@ -84,7 +84,7 @@ for i=1:steps
         a1(:,n) = F(:,n) ./ m ;
     end
     
-    for n=1:dim
+    parfor n=1:dim
         x(:,n) = x(:,n) + v(:,n)*dt + 1/2*a1(:,n)*dt^2 ;
         %v(:,n) = v(:,n) + a1(:,n)*dt ;
         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;

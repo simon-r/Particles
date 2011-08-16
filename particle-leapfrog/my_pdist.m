@@ -6,7 +6,7 @@ sX = size(X) ;
 
 tmsize = ( sX(1) - 1 ) * sX(1) / 2 ;
 
-r = zeros( tmsize , sX(2) ) ;
+r = set_array( zeros( tmsize , sX(2) ) ) ;
 
 ir = 1 ;
 for i=1:(sX(1)-1)
