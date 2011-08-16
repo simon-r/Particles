@@ -58,7 +58,7 @@ for i=1:steps
     
     tic ;   
     m1m2(:) = my_pdist( m , @dist_mult ) ;
-    dist(:) = pdist( x ) ;
+    dist(:) = my_pdist( x , @dist_eucl ) ;
     
     Fs(:) = (G .* m1m2 ) ./ ( dist.^2 ) ;
     
