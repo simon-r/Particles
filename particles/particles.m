@@ -2,36 +2,41 @@ function  particles
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-vs = 1000 ;
+vs = 700 ;
 
+G = 0.05 ;
+dt = 0.004 ;
+steps = 2000 ;
+
+x1 = cluster( 1 , 1 , 1 , vs/2 ) ;
+x2 = cluster( -1 , -1 , -1 , vs/2 ) ;
+x3 = cluster( -1 , -1 , 0 , vs/3 ) ;
+
+
+x = [ x1 ; x2 ; x3 ] ;
+
+[vs dim] = size(x) ;
 tmsize = (vs-1)*vs / 2 ;
 
-G = 0.005 ;
-dim = 3 ;
-dt = 0.004 ;
-steps = 200 ;
 
-x = set_array( rand_sphe( vs ) );
-
-m = set_array( rand( size(x,1) , 1 )*0.5 + 1 );
-m1m2 = set_array( ones( tmsize , 1 ) ) ;
-
-a = set_array( zeros( size(x) ) ) ;
-
-a1 = set_array( zeros( size(x) ) ) ;
-v = set_array( zeros( size(x) ) ) ;
-
-F = set_array( zeros( vs , dim ) ) ;
-Fs = set_array( ones( tmsize , 1 ) ) ; 
-
-tFs = set_array( zeros( vs , dim ) ) ;
-Fsi = set_array( zeros( vs , 1 ) ) ;
+v = ( zeros( size(x) ) ) ;
 
 
-dist = set_array( ones( tmsize , 1 ) ) ;
-ru = set_array( zeros( tmsize , dim ) ) ;
+m = ( rand( size(x,1) , 1 )*0.5 + 1 );
+a = ( zeros( size(x) ) ) ;
+a1 = ( zeros( size(x) ) ) ;
 
-mc = set_array( zeros( 1, dim ) ) ;
+
+
+F = ( zeros( vs , dim ) ) ;
+Fs = ( ones( tmsize , 1 ) ) ; 
+
+tFs = ( zeros( vs , dim ) ) ;
+Fsi = ( zeros( vs , 1 ) ) ;
+
+ru = ( zeros( tmsize , dim ) ) ;
+
+mc = ( zeros( 1, dim ) ) ;
 
 
 indx = zeros( vs-1 , 1 ) ;
@@ -41,7 +46,7 @@ clock2 = 0 ;
 
 %m(30) = 5 ;
 
-lm = 5 ;
+lm = 7 ;
 
 mt = sum( m ) ;
 
@@ -56,7 +61,7 @@ for i=1:steps
     
     tic ;   
 
-    Fs(:) = gravity( G , x , m ) ;
+    Fs(:) = spring( G , x , m ) ;
     
     ru(:) = my_pdist( x , @dist_uvect ) ;
     clock1 = clock1 + toc  ;
