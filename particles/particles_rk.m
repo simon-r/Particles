@@ -5,8 +5,8 @@ function  particles_rk
 vs = 700 ;
 
 G = 0.005 ;
-dt = 0.004 ;
-steps = 2000 ;
+dt = 0.002 ;
+steps = 10000 ;
 
 x1 = cluster( 1 , 1 , 1 , vs/2 ) ;
 x2 = cluster( -1 , -1 , -1 , vs/2 ) ;
@@ -101,6 +101,8 @@ for i=1:steps
     zlim([-lm lm]) ;
     drawnow;
     pause(0.0);
+    
+    x = loop_boundary( [-lm lm] , [-lm lm] , [-lm lm] , x ) ;
     
 end
 
