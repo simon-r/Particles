@@ -61,11 +61,22 @@ for i=1:steps
     
     tic ;   
 
-    Fs(:) = gravity( G , x , m ) ;
+   
+    
+    
+    %Fs(:) = gravity( G , x , m ) ;
     
     ru(:) = my_pdist( x , @dist_uvect ) ;
     clock1 = clock1 + toc  ;
       
+    %%% rk new code
+    k1 = dt * v ;
+    
+    xk1 = x + 1/2*k1 ;
+    k2 = dt * ( 1/2*dt  ) ;
+    
+    %%%% 
+    
     tic ;
     for j=1:vs
         i1 = (indx(1:j-1) + j-1)' ;
@@ -82,7 +93,6 @@ for i=1:steps
     parfor n=1:dim
         a1(:,n) = F(:,n) ./ m ;
         x(:,n) = x(:,n) + v(:,n)*dt + 1/2*a(:,n)*dt^2 ;
-        %v(:,n) = v(:,n) + a1(:,n)*dt ;
         v(:,n) = v(:,n) + ( ( a(:,n) + a1(:,n) ) )  ./ 2 * dt ;
     end
     
@@ -113,5 +123,30 @@ disp( clock1 / steps ) ;
 disp('step 2:') ;
 disp( clock2 / steps ) ;
 
+
+
+    function kn = compute_kn( xk )
+        Fk(:) = gravity( G , xk , m ) ;
+        
+        for j=1:vs
+            i1 = (indx(1:j-1) + j-1)' ;
+            i2 = (j+indx(j)):(indx(j)+vs-1) ;
+            
+            Fki(:) = [ Fk(i1) ; 0 ; Fk(i2)] ;
+            
+           
+        end
+        
+    end
 end
+
+
+
+
+
+
+
+
+
+
 
